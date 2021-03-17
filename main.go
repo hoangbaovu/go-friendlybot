@@ -6,6 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/hoangbaovu/go-friendlybot/internal/commands"
 	"github.com/hoangbaovu/go-friendlybot/internal/config"
 	"github.com/hoangbaovu/go-friendlybot/internal/events"
 
@@ -30,6 +31,7 @@ func main() {
 			discordgo.IntentsGuildMessages)
 
 	registerEvents(s)
+	registerCommands(s, cfg)
 
 	if err = s.Open(); err != nil {
 		fmt.Println(err)
@@ -49,4 +51,17 @@ func registerEvents(s *discordgo.Session) {
 	s.AddHandler(joinLeaveHandler.HandlerLeave)
 	s.AddHandler(events.NewReadyHandler().Handler)
 	s.AddHandler(events.NewMessageHandler().Handler)
+}
+
+func registerCommands(s *discordgo.Session, cfg *config.Config) {
+	cmdHandler := commands.NewCommandHandler(cfg.Prefix)
+	cmdHandler.OnError = func(err error, ctx *commands.Context) {
+		ctx.Sessios.ChannelMessageSend(ctx.Message.ChannelID,
+			fmt.Sprintf("Command Execution failed: %s", err.Error()))
+	}
+
+	cmdHandler.RegisterCommand(&commands.CmdPing{})
+	cmdHandler.RegisterMiddleware(&commands.MwPermissions{})
+
+	s.AddHandler(cmdHandler.HandleMessage)
 }
