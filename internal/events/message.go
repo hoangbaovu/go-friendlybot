@@ -14,6 +14,12 @@ func NewMessageHandler() *MessageHandler {
 }
 
 func (h *MessageHandler) Handler(s *discordgo.Session, e *discordgo.MessageCreate) {
+
+	// Ignore all messages created by the bot itself
+	if e.Author.ID == s.State.User.ID {
+		return
+	}
+
 	channel, err := s.Channel(e.ChannelID)
 	if err != nil {
 		fmt.Println("Failed getting channel: ", err)
