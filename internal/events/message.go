@@ -16,7 +16,7 @@ func NewMessageHandler() *MessageHandler {
 func (h *MessageHandler) Handler(s *discordgo.Session, e *discordgo.MessageCreate) {
 	channel, err := s.Channel(e.ChannelID)
 	if err != nil {
-		fmt.Println("Faild getting channel: ", err)
+		fmt.Println("Failed getting channel: ", err)
 		return
 	}
 

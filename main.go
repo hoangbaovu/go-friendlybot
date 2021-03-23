@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"os/signal"
@@ -13,10 +14,14 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func main() {
-	const fileName = "./config/config.json"
+const defaultConfigName = "./config/config.json"
 
-	cfg, err := config.ParseConfigFromJSONFile(fileName)
+var flagConfig = flag.String("c", defaultConfigName, "The location of the config file.")
+
+func main() {
+	flag.Parse()
+
+	cfg, err := config.ParseConfigFromJSONFile(*flagConfig)
 	if err != nil {
 		panic(err)
 	}

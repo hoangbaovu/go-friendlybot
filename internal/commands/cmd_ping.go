@@ -4,7 +4,6 @@ type CmdPing struct {
 }
 
 func (c *CmdPing) Invokes() []string {
-	println("ping")
 	return []string{"ping", "p"}
 }
 
